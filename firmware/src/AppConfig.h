@@ -2,15 +2,21 @@
 
 #include <Arduino.h>
 
+#if __has_include("AppSecrets.h")
+#include "AppSecrets.h"
+#else
+#error "Missing AppSecrets.h. Copy AppSecrets.example.h to AppSecrets.h and fill in local credentials."
+#endif
+
 namespace AppConfig {
 
-constexpr char DEVICE_ID[] = "servicebox-lite-001";
-constexpr char WIFI_SSID[] = "LBIIO_MESH";
-constexpr char WIFI_PASSWORD[] = "systemywizyjneiwirtualne@";
-constexpr char MQTT_HOST[] = "192.168.50.6";
-constexpr uint16_t MQTT_PORT = 1883;
-constexpr char MQTT_USERNAME[] = "";
-constexpr char MQTT_PASSWORD[] = "";
+constexpr const char *DEVICE_ID = AppSecrets::DEVICE_ID;
+constexpr const char *WIFI_SSID = AppSecrets::WIFI_SSID;
+constexpr const char *WIFI_PASSWORD = AppSecrets::WIFI_PASSWORD;
+constexpr const char *MQTT_HOST = AppSecrets::MQTT_HOST;
+constexpr uint16_t MQTT_PORT = AppSecrets::MQTT_PORT;
+constexpr const char *MQTT_USERNAME = AppSecrets::MQTT_USERNAME;
+constexpr const char *MQTT_PASSWORD = AppSecrets::MQTT_PASSWORD;
 
 // Hardware bring-up flags
 constexpr bool ENABLE_TACHOMETERS = false;

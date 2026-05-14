@@ -14,10 +14,14 @@ Z katalogu `server/`:
 1. Utwórz środowisko: `python3 -m venv .venv`
 2. Aktywuj środowisko.
 3. Zainstaluj zależności: `pip install -r requirements.txt`
-4. Ustaw zmienne środowiskowe:
+4. Skopiuj `.env.example` do `.env`
+5. Uzupełnij w `.env`:
    - `AR_IOT_MQTT_HOST`
    - opcjonalnie `AR_IOT_MQTT_PORT`, `AR_IOT_MQTT_USERNAME`, `AR_IOT_MQTT_PASSWORD`
-5. Uruchom monitor telemetrii: `python -m ar_iot_server monitor`
+   - opcjonalnie `AR_IOT_LOG_PATH` i tematy MQTT, jeśli chcesz zmienić domyślny kontrakt
+6. Uruchom monitor telemetrii: `python -m ar_iot_server monitor`
+
+Plik `.env` jest lokalny i jest ignorowany przez Git.
 
 ## Status
 

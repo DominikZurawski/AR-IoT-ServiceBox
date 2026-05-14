@@ -50,13 +50,22 @@ Po wgraniu firmware i uruchomieniu `pio device monitor`:
 
 ## Konfiguracja MQTT
 
-Przed buildem uzupełnij w `src/AppConfig.h`:
+Przed buildem:
 
-- `WIFI_SSID`
-- `WIFI_PASSWORD`
-- `MQTT_HOST`
-- opcjonalnie `MQTT_USERNAME` i `MQTT_PASSWORD`
-- opcjonalnie `ENABLE_TACHOMETERS` ustawione na `true`, gdy wejścia tachometru są już fizycznie podłączone
+1. skopiuj `src/AppSecrets.example.h` do `src/AppSecrets.h`
+2. uzupełnij w `src/AppSecrets.h`:
+   - `DEVICE_ID`
+   - `WIFI_SSID`
+   - `WIFI_PASSWORD`
+   - `MQTT_HOST`
+   - opcjonalnie `MQTT_USERNAME` i `MQTT_PASSWORD`
+3. w `src/AppConfig.h` zostaw parametry sprzętowe i progi pracy
+
+Plik `src/AppSecrets.h` jest lokalny i jest ignorowany przez Git.
+
+Opcjonalnie ustaw w `src/AppConfig.h`:
+
+- `ENABLE_TACHOMETERS = true`, gdy wejścia tachometru są już fizycznie podłączone
 
 Tematy MQTT:
 

@@ -9,6 +9,7 @@ __pycache__/
 .ruff_cache/
 .venv/
 server/.venv/
+server/.env
 
 # Logs and runtime data
 *.log
@@ -18,6 +19,7 @@ server/logs/
 # PlatformIO and firmware build artifacts
 .pio/
 firmware/.pio/
+firmware/src/AppSecrets.h
 
 # VS Code local machine state
 .vscode/.browse.c_cpp.db*
