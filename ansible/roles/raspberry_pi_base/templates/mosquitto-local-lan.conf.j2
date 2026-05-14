@@ -1,0 +1,2 @@
+listener {{ mosquitto_listener_port }} {{ mosquitto_listener_host }}
+allow_anonymous {{ 'true' if mosquitto_allow_anonymous else 'false' }}

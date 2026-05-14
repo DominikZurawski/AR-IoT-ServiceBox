@@ -1,0 +1,12 @@
+---
+raspberry_pi_base_packages:
+  - git
+  - python3
+  - python3-venv
+  - python3-pip
+  - mosquitto
+  - mosquitto-clients
+
+mosquitto_listener_host: "0.0.0.0"
+mosquitto_listener_port: 1883
+mosquitto_allow_anonymous: true

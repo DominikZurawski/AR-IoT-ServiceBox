@@ -1,0 +1,58 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "firmware: build",
+      "type": "shell",
+      "command": "pio run",
+      "options": {
+        "cwd": "${workspaceFolder}/firmware"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "firmware: upload",
+      "type": "shell",
+      "command": "pio run -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/firmware"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "firmware: monitor",
+      "type": "shell",
+      "command": "pio device monitor",
+      "options": {
+        "cwd": "${workspaceFolder}/firmware"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "server: run",
+      "type": "shell",
+      "command": ".venv/bin/python",
+      "args": [
+        "-m",
+        "ar_iot_server"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/server",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/server/src"
+        }
+      },
+      "linux": {
+        "command": ".venv/bin/python"
+      },
+      "osx": {
+        "command": ".venv/bin/python"
+      },
+      "windows": {
+        "command": ".venv\\Scripts\\python.exe"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

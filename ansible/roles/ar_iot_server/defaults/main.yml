@@ -1,0 +1,14 @@
+---
+ar_iot_server_user: pi
+ar_iot_server_group: "{{ ar_iot_server_user }}"
+ar_iot_server_install_dir: /opt/ar-iot-servicebox
+ar_iot_server_repo_url: "https://example.com/ar-iot-servicebox.git"
+ar_iot_server_repo_version: main
+ar_iot_server_server_dir: "{{ ar_iot_server_install_dir }}/server"
+ar_iot_server_venv_path: "{{ ar_iot_server_server_dir }}/.venv"
+ar_iot_server_pythonpath: "{{ ar_iot_server_server_dir }}/src"
+ar_iot_server_log_path: "{{ ar_iot_server_server_dir }}/logs/telemetry.jsonl"
+ar_iot_server_mqtt_host: 127.0.0.1
+ar_iot_server_mqtt_port: 1883
+ar_iot_server_mqtt_username: ""
+ar_iot_server_mqtt_password: ""

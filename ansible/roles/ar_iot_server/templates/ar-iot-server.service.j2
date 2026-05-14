@@ -1,0 +1,25 @@
+[Unit]
+Description=AR IoT ServiceBox Server
+After=network.target mosquitto.service
+
+[Service]
+Type=simple
+User={{ ar_iot_server_user }}
+Group={{ ar_iot_server_group }}
+WorkingDirectory={{ ar_iot_server_server_dir }}
+Environment=PYTHONPATH={{ ar_iot_server_pythonpath }}
+Environment=AR_IOT_MQTT_HOST={{ ar_iot_server_mqtt_host }}
+Environment=AR_IOT_MQTT_PORT={{ ar_iot_server_mqtt_port }}
+Environment=AR_IOT_LOG_PATH={{ ar_iot_server_log_path }}
+{% if ar_iot_server_mqtt_username %}
+Environment=AR_IOT_MQTT_USERNAME={{ ar_iot_server_mqtt_username }}
+{% endif %}
+{% if ar_iot_server_mqtt_password %}
+Environment=AR_IOT_MQTT_PASSWORD={{ ar_iot_server_mqtt_password }}
+{% endif %}
+ExecStart={{ ar_iot_server_venv_path }}/bin/python -m ar_iot_server monitor
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

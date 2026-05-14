@@ -1,0 +1,50 @@
+---
+- name: Ensure application base directory exists
+  ansible.builtin.file:
+    path: "{{ ar_iot_server_install_dir }}"
+    state: directory
+    owner: "{{ ar_iot_server_user }}"
+    group: "{{ ar_iot_server_group }}"
+    mode: "0755"
+
+- name: Clone or update repository
+  ansible.builtin.git:
+    repo: "{{ ar_iot_server_repo_url }}"
+    dest: "{{ ar_iot_server_install_dir }}"
+    version: "{{ ar_iot_server_repo_version }}"
+    update: true
+  become_user: "{{ ar_iot_server_user }}"
+
+- name: Ensure server log directory exists
+  ansible.builtin.file:
+    path: "{{ ar_iot_server_server_dir }}/logs"
+    state: directory
+    owner: "{{ ar_iot_server_user }}"
+    group: "{{ ar_iot_server_group }}"
+    mode: "0755"
+
+- name: Install Python requirements into virtualenv
+  ansible.builtin.pip:
+    requirements: "{{ ar_iot_server_server_dir }}/requirements.txt"
+    virtualenv: "{{ ar_iot_server_venv_path }}"
+    virtualenv_command: python3 -m venv
+    state: present
+
+- name: Install systemd service
+  ansible.builtin.template:
+    src: ar-iot-server.service.j2
+    dest: /etc/systemd/system/ar-iot-server.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart ar-iot-server
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Ensure AR IoT server service is enabled and started
+  ansible.builtin.systemd:
+    name: ar-iot-server
+    enabled: true
+    state: started

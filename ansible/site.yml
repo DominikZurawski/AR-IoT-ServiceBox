@@ -1,0 +1,7 @@
+---
+- name: Provision AR IoT ServiceBox host
+  hosts: all
+  become: true
+  roles:
+    - raspberry_pi_base
+    - ar_iot_server

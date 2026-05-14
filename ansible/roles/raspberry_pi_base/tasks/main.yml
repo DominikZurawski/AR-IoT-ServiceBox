@@ -1,0 +1,37 @@
+---
+- name: Update apt package index
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Upgrade installed packages
+  ansible.builtin.apt:
+    upgrade: dist
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ raspberry_pi_base_packages }}"
+    state: present
+
+- name: Ensure Mosquitto config directory exists
+  ansible.builtin.file:
+    path: /etc/mosquitto/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure Mosquitto LAN listener
+  ansible.builtin.template:
+    src: mosquitto-local-lan.conf.j2
+    dest: /etc/mosquitto/conf.d/local-lan.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart mosquitto
+
+- name: Ensure Mosquitto service is enabled and started
+  ansible.builtin.systemd:
+    name: mosquitto
+    enabled: true
+    state: started

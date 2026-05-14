@@ -1,0 +1,5 @@
+---
+- name: Restart ar-iot-server
+  ansible.builtin.systemd:
+    name: ar-iot-server
+    state: restarted
