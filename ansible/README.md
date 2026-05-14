@@ -21,14 +21,31 @@ Jeśli broker lub serwer mają używać innych parametrów niż domyślne, ustaw
 
 - `ar_iot_server_mqtt_host`
 - `ar_iot_server_mqtt_port`
-- `ar_iot_server_mqtt_username`
-- `ar_iot_server_mqtt_password`
+
+## Sekrety w `ansible-vault`
+
+Sekrety wdrożeniowe trzymaj w `group_vars/all/vault.yml`.
+
+Repo zawiera:
+
+- `group_vars/all/vault.yml` - zaszyfrowany placeholder
+- `group_vars/all/vault.yml.example` - jawny przykład struktury
+
+Przed użyciem:
+
+1. podmień placeholdery w `group_vars/all/vault.yml` na własne wartości przez `ansible-vault edit group_vars/all/vault.yml`
+2. albo skopiuj `group_vars/all/vault.yml.example` do `group_vars/all/vault.yml` i zaszyfruj plik poleceniem `ansible-vault encrypt group_vars/all/vault.yml`
+
+Playbook uruchamiaj z hasłem vault, np.:
+
+- `ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox --ask-vault-pass`
+- albo `ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox --vault-password-file .vault_pass`
 
 ## Przykład uruchomienia
 
 Z katalogu `ansible/`:
 
-`ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox`
+`ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox --ask-vault-pass`
 
 ## Co wdraża playbook
 

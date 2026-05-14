@@ -23,6 +23,13 @@ Z katalogu `server/`:
 
 Plik `.env` jest lokalny i jest ignorowany przez Git.
 
+## Testy
+
+Do uruchamiania testów lokalnych:
+
+1. zainstaluj pakiety developerskie: `pip install -r requirements-dev.txt`
+2. uruchom: `pytest tests`
+
 ## Status
 
 Na tym etapie katalog zawiera:

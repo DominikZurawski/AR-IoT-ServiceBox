@@ -1,0 +1,7 @@
+---
+ar_iot_server_mqtt_username: >-
+  {{ '' if (vault_ar_iot_server_mqtt_username | default('')) == 'CHANGE_ME_MQTT_USERNAME'
+     else (vault_ar_iot_server_mqtt_username | default('')) }}
+ar_iot_server_mqtt_password: >-
+  {{ '' if (vault_ar_iot_server_mqtt_password | default('')) == 'CHANGE_ME_MQTT_PASSWORD'
+     else (vault_ar_iot_server_mqtt_password | default('')) }}

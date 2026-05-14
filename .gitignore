@@ -1,6 +1,10 @@
 # Local project notes not intended for publication
 agents.md
 
+# Ansible local secrets helpers
+ansible/.vault_pass
+ansible/group_vars/all/vault.local.yml
+
 # Python
 __pycache__/
 *.py[cod]
