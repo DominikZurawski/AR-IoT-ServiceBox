@@ -2,12 +2,6 @@
 
 Dokumentacja pomocnicza dla demonstratora `AR IoT ServiceBox`.
 
-## Co jest tutaj opisane
-
-- architektura komunikacji MQTT między `ESP32`, `Raspberry Pi` i klientem AR
-- uproszczony kontrakt integracyjny dla `Quest 3`
-- miejsce na dalsze notatki architektoniczne, diagramy i procedury testowe
-
 ## Aktualne dokumenty
 
 ### `mqtt-protocol.md`

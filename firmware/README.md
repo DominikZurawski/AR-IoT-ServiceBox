@@ -18,7 +18,7 @@ Z katalogu `firmware/`:
 
 ## Status
 
-Na tym etapie projekt zawiera firmware do walidacji hardware `AR-IoT ServiceBox Lite` oraz pierwszą integrację z MQTT:
+Projekt zawiera firmware do walidacji hardware `AR-IoT ServiceBox Lite` oraz pierwszą integrację z MQTT:
 
 - inicjalizację magistrali I2C na `GPIO21` i `GPIO22`
 - skan I2C i próbę komunikacji z czujnikiem `SHT31` pod `0x44` lub `0x45`

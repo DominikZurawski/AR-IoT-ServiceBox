@@ -32,7 +32,7 @@ Do uruchamiania testów lokalnych:
 
 ## Status
 
-Na tym etapie katalog zawiera:
+Katalog zawiera:
 
 - monitor MQTT subskrybujący `arbox/+/telemetry`
 - logowanie telemetrii na konsolę i do `logs/telemetry.jsonl`
