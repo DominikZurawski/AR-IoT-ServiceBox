@@ -7,6 +7,7 @@ Automatyzacja przygotowania Raspberry Pi i wdrożenia serwera.
 - rola `raspberry_pi_base` instaluje bazowe pakiety i uruchamia Mosquitto
 - rola `raspberry_pi_base` wystawia Mosquitto na porcie `1883` w LAN
 - rola `ar_iot_server` klonuje repozytorium, tworzy `venv`, instaluje zależności i uruchamia `python -m ar_iot_server monitor` jako usługę `systemd`
+- opcjonalna rola `node_red` instaluje `Node-RED`, `FlowFuse Dashboard` i przykładowy flow demonstracyjny
 
 ## Wymagane zmienne
 
@@ -21,6 +22,10 @@ Jeśli broker lub serwer mają używać innych parametrów niż domyślne, ustaw
 
 - `ar_iot_server_mqtt_host`
 - `ar_iot_server_mqtt_port`
+
+Opcjonalnie dla `Node-RED`:
+
+- `node_red_enabled`
 
 ## Sekrety w `ansible-vault`
 
@@ -45,7 +50,11 @@ Playbook uruchamiaj z hasłem vault, np.:
 
 Z katalogu `ansible/`:
 
-`ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox --ask-vault-pass`
+`ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox`
+
+Jeśli logujesz się do Raspberry hasłem przez SSH i używasz `sudo`, uruchom:
+
+`ansible-playbook -i inventory/hosts.yml site.yml --limit rpi-servicebox --ask-pass --ask-become-pass`
 
 ## Co wdraża playbook
 
@@ -57,6 +66,11 @@ Z katalogu `ansible/`:
 - instaluje zależności z `server/requirements.txt`
 - instaluje usługę `ar-iot-server.service`
 - uruchamia usługę i włącza autostart
+- gdy `node_red_enabled=true`:
+  - instaluje `Node-RED` oficjalnym instalatorem dla systemów Debian-based
+  - konfiguruje usługę `nodered` pod użytkownika z `ansible_user`
+  - instaluje pakiet `@flowfuse/node-red-dashboard`
+  - kopiuje przykładowy flow do `~/.node-red/examples/ar-iot-servicebox-demo-flow.json`
 
 ## Weryfikacja na Raspberry Pi
 
@@ -64,4 +78,13 @@ Po wdrożeniu sprawdź:
 
 - `systemctl status mosquitto`
 - `systemctl status ar-iot-server`
+- `systemctl status nodered`
 - `ss -ltnp | grep 1883`
+
+Jeśli włączony jest `Node-RED`, edytor będzie dostępny pod:
+
+- `http://<RPI_IP>:1880`
+
+Po imporcie przykładowego flow dashboard będzie dostępny pod:
+
+- `http://<RPI_IP>:1880/dashboard/ar-iot`

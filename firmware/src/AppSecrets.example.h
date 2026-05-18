@@ -2,7 +2,7 @@
 
 namespace AppSecrets {
 
-constexpr char DEVICE_ID[] = "servicebox-lite-001";
+constexpr char DEVICE_ID[] = "ARBOX-001";
 constexpr char WIFI_SSID[] = "YOUR_WIFI_SSID";
 constexpr char WIFI_PASSWORD[] = "YOUR_WIFI_PASSWORD";
 constexpr char MQTT_HOST[] = "192.168.1.10";

@@ -27,11 +27,20 @@ Opisuje:
 - zakres odpowiedzialności warstwy bridge w serwerze Python
 - ograniczenia obecnej wersji integracji
 
+### `node-red-dashboard.md`
+
+Opisuje:
+
+- jak uruchomić `Node-RED` jako warstwę operatorską na `Raspberry Pi`
+- jak zaimportować przykładowy flow demonstracyjny
+- jak podejrzeć telemetrię i wysyłać komendy z prostego dashboardu
+
 ## Powiązanie z kodem
 
 - `firmware/` publikuje techniczną telemetrię urządzenia i odbiera komendy sterujące
 - `server/` subskrybuje telemetrię, zapisuje log i tłumaczy kontrakt `Quest 3`
 - `ansible/` przygotowuje `Raspberry Pi`, instaluje `Mosquitto` i wdraża serwer jako usługę `systemd`
+- `Node-RED` może działać opcjonalnie jako panel testowy i dashboard operatorski nad tym samym brokerem MQTT
 
 ## Czego jeszcze brakuje
 

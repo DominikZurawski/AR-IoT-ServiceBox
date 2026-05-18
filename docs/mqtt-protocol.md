@@ -25,7 +25,7 @@ Przykład:
 
 ```json
 {
-  "device_id": "servicebox-lite-001",
+  "device_id": "ARBOX-001",
   "timestamp_ms": 1620860,
   "system_state": "OK",
   "temperature_env_c": 26.7,
@@ -111,7 +111,7 @@ Uwagi:
 - `fanSelected = "B"` gdy `fan_select = false`
 - `fanReportedRPM` dotyczy aktualnie wybranego wentylatora
 - `fanReportedPWM` jest przeliczane do zakresu `0..100`
-- `device_id` jest tłumaczone z `servicebox-lite-001` na `ARBOX-001`
+- `device_id` pozostaje takie samo w telemetrii technicznej, topicach i kontrakcie `Quest 3`
 
 ## Komendy uproszczone z Quest 3
 

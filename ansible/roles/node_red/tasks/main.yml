@@ -1,0 +1,98 @@
+---
+- name: Install Node-RED prerequisites
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - curl
+    state: present
+
+- name: Download Node-RED installer
+  ansible.builtin.get_url:
+    url: "{{ node_red_install_script_url }}"
+    dest: /tmp/update-nodejs-and-nodered-deb
+    mode: "0755"
+
+- name: Check if Node-RED is already installed
+  ansible.builtin.command: node-red --version
+  register: node_red_version_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Node-RED
+  ansible.builtin.command:
+    argv:
+      - bash
+      - /tmp/update-nodejs-and-nodered-deb
+      - --confirm-install
+      - --confirm-root
+      - "--nodered-user={{ node_red_user }}"
+  when: node_red_version_check.rc != 0
+  notify:
+    - Reload systemd
+    - Restart nodered
+
+- name: Ensure Node-RED user directory exists
+  ansible.builtin.file:
+    path: "{{ node_red_user_dir }}"
+    state: directory
+    owner: "{{ node_red_user }}"
+    group: "{{ node_red_group }}"
+    mode: "0755"
+
+- name: Ensure Node-RED examples directory exists
+  ansible.builtin.file:
+    path: "{{ node_red_examples_dir }}"
+    state: directory
+    owner: "{{ node_red_user }}"
+    group: "{{ node_red_group }}"
+    mode: "0755"
+
+- name: Ensure Node-RED systemd override directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/nodered.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install Node-RED systemd override
+  ansible.builtin.template:
+    src: nodered.service.override.conf.j2
+    dest: /etc/systemd/system/nodered.service.d/override.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart nodered
+
+- name: Check if FlowFuse Dashboard is already installed
+  ansible.builtin.command: npm list {{ node_red_dashboard_package }} --depth=0
+  args:
+    chdir: "{{ node_red_user_dir }}"
+  become_user: "{{ node_red_user }}"
+  register: node_red_dashboard_check
+  changed_when: false
+  failed_when: false
+
+- name: Install FlowFuse Dashboard package
+  ansible.builtin.command: npm install {{ node_red_dashboard_package }}
+  args:
+    chdir: "{{ node_red_user_dir }}"
+  become_user: "{{ node_red_user }}"
+  when: node_red_dashboard_check.rc != 0
+  notify: Restart nodered
+
+- name: Copy example AR IoT ServiceBox flow
+  ansible.builtin.copy:
+    src: ar-iot-servicebox-demo-flow.json
+    dest: "{{ node_red_examples_dir }}/ar-iot-servicebox-demo-flow.json"
+    owner: "{{ node_red_user }}"
+    group: "{{ node_red_group }}"
+    mode: "0644"
+
+- name: Ensure Node-RED service is enabled and started
+  ansible.builtin.systemd:
+    name: nodered
+    enabled: true
+    state: started

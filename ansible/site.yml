@@ -5,3 +5,5 @@
   roles:
     - raspberry_pi_base
     - ar_iot_server
+    - role: node_red
+      when: node_red_enabled | default(false)

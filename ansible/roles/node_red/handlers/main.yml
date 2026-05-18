@@ -1,0 +1,9 @@
+---
+- name: Restart nodered
+  ansible.builtin.systemd:
+    name: nodered
+    state: restarted
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true

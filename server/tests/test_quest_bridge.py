@@ -2,17 +2,13 @@ from __future__ import annotations
 
 import pytest
 
-from ar_iot_server.quest_bridge import translate_device_id, translate_quest_command, translate_telemetry
-
-
-def test_translate_device_id_uses_arbox_prefix() -> None:
-    assert translate_device_id("servicebox-lite-001") == "ARBOX-001"
+from ar_iot_server.quest_bridge import translate_quest_command, translate_telemetry
 
 
 def test_translate_telemetry_maps_selected_fan_and_pwm() -> None:
     result = translate_telemetry(
         {
-            "device_id": "servicebox-lite-001",
+            "device_id": "ARBOX-001",
             "timestamp_ms": 3210,
             "fan_select": True,
             "fan_a_rpm": 1234,
@@ -25,7 +21,7 @@ def test_translate_telemetry_maps_selected_fan_and_pwm() -> None:
         }
     )
 
-    assert result.telemetry_topic_device_id == "servicebox-lite-001"
+    assert result.telemetry_topic_device_id == "ARBOX-001"
     assert result.telemetry_payload["device_id"] == "ARBOX-001"
     assert result.telemetry_payload["fanSelected"] == "A"
     assert result.telemetry_payload["fanReportedRPM"] == 1234

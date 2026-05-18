@@ -1,0 +1,9 @@
+---
+node_red_user: "{{ ansible_user }}"
+node_red_group: "{{ node_red_user }}"
+node_red_user_home: "/home/{{ node_red_user }}"
+node_red_user_dir: "{{ node_red_user_home }}/.node-red"
+node_red_examples_dir: "{{ node_red_user_dir }}/examples"
+node_red_install_script_url: "https://github.com/node-red/linux-installers/releases/latest/download/update-nodejs-and-nodered-deb"
+node_red_dashboard_package: "@flowfuse/node-red-dashboard"
+node_red_editor_port: 1880

@@ -1,0 +1,476 @@
+[
+  {
+    "id": "f0f8e0304e3a0a41",
+    "type": "tab",
+    "label": "AR IoT Dashboard",
+    "disabled": false,
+    "info": "Demo dashboard for AR IoT ServiceBox over MQTT."
+  },
+  {
+    "id": "a81f47f1fbc2ce73",
+    "type": "comment",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Import this flow and click Deploy. Default device id in the command panel: ARBOX-001",
+    "info": "",
+    "x": 380,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "32144c37dfbbf07d",
+    "type": "mqtt in",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Technical telemetry",
+    "topic": "arbox/+/telemetry",
+    "qos": "1",
+    "datatype": "auto-detect",
+    "broker": "9a0c30569c8574c3",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 150,
+    "y": 120,
+    "wires": [
+      [
+        "e72c9e4d56a5f7c0"
+      ]
+    ]
+  },
+  {
+    "id": "e72c9e4d56a5f7c0",
+    "type": "json",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Parse telemetry JSON",
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "x": 370,
+    "y": 120,
+    "wires": [
+      [
+        "d5f1bd125d55a7d1",
+        "e0b3ff24944791f7"
+      ]
+    ]
+  },
+  {
+    "id": "d5f1bd125d55a7d1",
+    "type": "function",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Normalize technical telemetry",
+    "func": "const payload = msg.payload || {};\nconst fanSelected = payload.fan_select ? \"A\" : \"B\";\nconst fanReportedRpm = fanSelected === \"A\" ? Number(payload.fan_a_rpm || 0) : Number(payload.fan_b_rpm || 0);\nconst pwmPercent = Math.round((Number(payload.fan_pwm || 0) / 255) * 100);\n\nmsg.payload = {\n    device_id: String(payload.device_id || \"unknown-device\"),\n    timestamp_ms: Number(payload.timestamp_ms || 0),\n    system_state: String(payload.system_state || \"UNKNOWN\"),\n    temperature_env_c: Number(payload.temperature_env_c || 0),\n    humidity_pct: Number(payload.humidity_pct || 0),\n    fan_selected: fanSelected,\n    fan_reported_rpm: fanReportedRpm,\n    fan_pwm_percent: Number.isFinite(pwmPercent) ? pwmPercent : 0,\n    wifi_connected: Boolean(payload.wifi_connected),\n    mqtt_connected: Boolean(payload.mqtt_connected),\n    error_code: String(payload.error_code || \"\")\n};\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 650,
+    "y": 120,
+    "wires": [
+      [
+        "6ee3578c0b2f0cb4"
+      ]
+    ]
+  },
+  {
+    "id": "6ee3578c0b2f0cb4",
+    "type": "ui-template",
+    "z": "f0f8e0304e3a0a41",
+    "group": "49bf27808712a70d",
+    "page": "",
+    "ui": "",
+    "name": "Technical telemetry card",
+    "order": 1,
+    "width": "12",
+    "height": "7",
+    "head": "",
+    "format": "<template>\n  <div class=\"telemetry-grid\">\n    <div class=\"metric\"><span class=\"label\">Device</span><span class=\"value\">{{ telemetry.device_id || 'n/a' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">State</span><span class=\"value\">{{ telemetry.system_state || 'UNKNOWN' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">Temp</span><span class=\"value\">{{ telemetry.temperature_env_c ?? 0 }} C</span></div>\n    <div class=\"metric\"><span class=\"label\">Humidity</span><span class=\"value\">{{ telemetry.humidity_pct ?? 0 }} %</span></div>\n    <div class=\"metric\"><span class=\"label\">Fan</span><span class=\"value\">{{ telemetry.fan_selected || '-' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">RPM</span><span class=\"value\">{{ telemetry.fan_reported_rpm ?? 0 }}</span></div>\n    <div class=\"metric\"><span class=\"label\">PWM</span><span class=\"value\">{{ telemetry.fan_pwm_percent ?? 0 }} %</span></div>\n    <div class=\"metric\"><span class=\"label\">Wi-Fi</span><span class=\"value\">{{ telemetry.wifi_connected ? 'OK' : 'DOWN' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">MQTT</span><span class=\"value\">{{ telemetry.mqtt_connected ? 'OK' : 'DOWN' }}</span></div>\n    <div class=\"metric metric-wide\"><span class=\"label\">Error</span><span class=\"value\">{{ telemetry.error_code || 'none' }}</span></div>\n  </div>\n</template>\n\n<script>\nexport default {\n  computed: {\n    telemetry () {\n      return this.msg?.payload || {}\n    }\n  }\n}\n</script>\n\n<style>\n.telemetry-grid {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 12px;\n}\n.metric {\n  background: #f3f6f8;\n  border: 1px solid #d7e0e5;\n  border-radius: 10px;\n  padding: 12px;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n.metric-wide {\n  grid-column: 1 / -1;\n}\n.label {\n  font-size: 0.8rem;\n  text-transform: uppercase;\n  color: #5b6975;\n}\n.value {\n  font-size: 1.1rem;\n  font-weight: 600;\n  color: #10212b;\n}\n</style>",
+    "storeOutMessages": true,
+    "passthru": true,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "",
+    "x": 950,
+    "y": 120,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "7a987f1fb8e4ea3d",
+    "type": "mqtt in",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Quest telemetry",
+    "topic": "arbox/+/quest/telemetry",
+    "qos": "1",
+    "datatype": "auto-detect",
+    "broker": "9a0c30569c8574c3",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 130,
+    "y": 220,
+    "wires": [
+      [
+        "c1a1d45c4ef70ffd"
+      ]
+    ]
+  },
+  {
+    "id": "c1a1d45c4ef70ffd",
+    "type": "json",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Parse quest JSON",
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "x": 350,
+    "y": 220,
+    "wires": [
+      [
+        "00c83b5b7361b7e7",
+        "358ecfe6c498be2f"
+      ]
+    ]
+  },
+  {
+    "id": "00c83b5b7361b7e7",
+    "type": "function",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Normalize quest telemetry",
+    "func": "const payload = msg.payload || {};\nmsg.payload = {\n    device_id: String(payload.device_id || \"unknown-device\"),\n    timestamp: Number(payload.timestamp || 0),\n    fanReportedRPM: Number(payload.fanReportedRPM || 0),\n    fanReportedPWM: Number(payload.fanReportedPWM || 0),\n    fanSelected: String(payload.fanSelected || \"-\"),\n    sensorTemperature: Number(payload.sensorTemperature || 0),\n    sensorHumidity: Number(payload.sensorHumidity || 0),\n    systemState: String(payload.systemState || \"UNKNOWN\"),\n    errorCode: String(payload.errorCode || \"\")\n};\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 620,
+    "y": 220,
+    "wires": [
+      [
+        "4488a9e7ea2c52df"
+      ]
+    ]
+  },
+  {
+    "id": "4488a9e7ea2c52df",
+    "type": "ui-template",
+    "z": "f0f8e0304e3a0a41",
+    "group": "f9be88b2a9eb5585",
+    "page": "",
+    "ui": "",
+    "name": "Quest telemetry card",
+    "order": 1,
+    "width": "12",
+    "height": "7",
+    "head": "",
+    "format": "<template>\n  <div class=\"telemetry-grid quest-grid\">\n    <div class=\"metric\"><span class=\"label\">AR Device</span><span class=\"value\">{{ telemetry.device_id || 'n/a' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">State</span><span class=\"value\">{{ telemetry.systemState || 'UNKNOWN' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">Temp</span><span class=\"value\">{{ telemetry.sensorTemperature ?? 0 }} C</span></div>\n    <div class=\"metric\"><span class=\"label\">Humidity</span><span class=\"value\">{{ telemetry.sensorHumidity ?? 0 }} %</span></div>\n    <div class=\"metric\"><span class=\"label\">Selected fan</span><span class=\"value\">{{ telemetry.fanSelected || '-' }}</span></div>\n    <div class=\"metric\"><span class=\"label\">RPM</span><span class=\"value\">{{ telemetry.fanReportedRPM ?? 0 }}</span></div>\n    <div class=\"metric\"><span class=\"label\">PWM</span><span class=\"value\">{{ telemetry.fanReportedPWM ?? 0 }} %</span></div>\n    <div class=\"metric metric-wide\"><span class=\"label\">Error</span><span class=\"value\">{{ telemetry.errorCode || 'none' }}</span></div>\n  </div>\n</template>\n\n<script>\nexport default {\n  computed: {\n    telemetry () {\n      return this.msg?.payload || {}\n    }\n  }\n}\n</script>\n\n<style>\n.quest-grid .metric {\n  background: #fff8ee;\n  border-color: #ecd4a2;\n}\n</style>",
+    "storeOutMessages": true,
+    "passthru": true,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "",
+    "x": 930,
+    "y": 220,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "5bd01da0e36e5b3f",
+    "type": "ui-template",
+    "z": "f0f8e0304e3a0a41",
+    "group": "68811dce99cbba67",
+    "page": "",
+    "ui": "",
+    "name": "Command panel",
+    "order": 1,
+    "width": "12",
+    "height": "10",
+    "head": "",
+    "format": "<template>\n  <div class=\"command-panel\">\n    <label>Device ID</label>\n    <input v-model=\"deviceId\" type=\"text\" />\n\n    <label>PWM: {{ pwm }}</label>\n    <input v-model=\"pwm\" type=\"range\" min=\"0\" max=\"100\" />\n\n    <label>Fault</label>\n    <select v-model=\"fault\">\n      <option value=\"fan_blocked\">fan_blocked</option>\n      <option value=\"overtemperature\">overtemperature</option>\n      <option value=\"clear\">clear</option>\n    </select>\n\n    <div class=\"actions\">\n      <button @click=\"sendPwm\">Send PWM</button>\n      <button @click=\"sendFault\">Simulate fault</button>\n      <button @click=\"sendResume\">Resume auto PWM</button>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data () {\n    return {\n      deviceId: 'ARBOX-001',\n      pwm: 80,\n      fault: 'fan_blocked'\n    }\n  },\n  methods: {\n    sendPwm () {\n      this.send({\n        device_id: this.deviceId,\n        payload: {\n          command: 'set_fan_pwm',\n          fan: 'selected',\n          value: Number(this.pwm)\n        }\n      })\n    },\n    sendFault () {\n      this.send({\n        device_id: this.deviceId,\n        payload: {\n          command: 'simulate_fault',\n          fault: this.fault\n        }\n      })\n    },\n    sendResume () {\n      this.send({\n        device_id: this.deviceId,\n        payload: {\n          command: 'resume_auto_pwm'\n        }\n      })\n    }\n  }\n}\n</script>\n\n<style>\n.command-panel {\n  display: grid;\n  gap: 10px;\n}\n.command-panel label {\n  font-size: 0.85rem;\n  text-transform: uppercase;\n  color: #5b6975;\n}\n.command-panel input,\n.command-panel select,\n.command-panel button {\n  padding: 10px 12px;\n  border-radius: 8px;\n  border: 1px solid #c9d4dc;\n}\n.command-panel input[type='range'] {\n  padding: 0;\n}\n.actions {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 8px;\n}\n.command-panel button {\n  background: #0f7a5a;\n  color: #ffffff;\n  font-weight: 600;\n  cursor: pointer;\n}\n.command-panel button:nth-child(2) {\n  background: #b05b18;\n}\n.command-panel button:nth-child(3) {\n  background: #254f7a;\n}\n</style>",
+    "storeOutMessages": true,
+    "passthru": true,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "",
+    "x": 170,
+    "y": 340,
+    "wires": [
+      [
+        "7c143fe86dc973b5"
+      ]
+    ]
+  },
+  {
+    "id": "7c143fe86dc973b5",
+    "type": "function",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Prepare quest command topic",
+    "func": "const deviceId = String(msg.device_id || \"\").trim();\nif (!deviceId) {\n    node.warn(\"Missing device_id in dashboard command\");\n    return null;\n}\nmsg.topic = `arbox/${deviceId}/quest/command`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 420,
+    "y": 340,
+    "wires": [
+      [
+        "67787cb28c7e1f7b",
+        "dd33a8104b32d89f"
+      ]
+    ]
+  },
+  {
+    "id": "67787cb28c7e1f7b",
+    "type": "json",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Serialize command JSON",
+    "property": "payload",
+    "action": "str",
+    "pretty": false,
+    "x": 660,
+    "y": 340,
+    "wires": [
+      [
+        "ba25ec1c2628d4cb",
+        "80ae335566f9fbcd"
+      ]
+    ]
+  },
+  {
+    "id": "ba25ec1c2628d4cb",
+    "type": "mqtt out",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Publish quest command",
+    "topic": "",
+    "qos": "1",
+    "retain": "false",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "9a0c30569c8574c3",
+    "x": 920,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "dd33a8104b32d89f",
+    "type": "debug",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Outgoing command object",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 690,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "e0b3ff24944791f7",
+    "type": "debug",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Technical telemetry raw",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 610,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "358ecfe6c498be2f",
+    "type": "debug",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Quest telemetry raw",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 580,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "80ae335566f9fbcd",
+    "type": "debug",
+    "z": "f0f8e0304e3a0a41",
+    "name": "Outgoing command JSON",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 900,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "49bf27808712a70d",
+    "type": "ui-group",
+    "name": "Technical Telemetry",
+    "page": "fd3f15ff6bfcbbbe",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": true,
+    "className": "",
+    "visible": "true",
+    "disabled": "false",
+    "groupType": "default"
+  },
+  {
+    "id": "f9be88b2a9eb5585",
+    "type": "ui-group",
+    "name": "Quest Telemetry",
+    "page": "fd3f15ff6bfcbbbe",
+    "width": "12",
+    "height": "1",
+    "order": 2,
+    "showTitle": true,
+    "className": "",
+    "visible": "true",
+    "disabled": "false",
+    "groupType": "default"
+  },
+  {
+    "id": "68811dce99cbba67",
+    "type": "ui-group",
+    "name": "Quest Commands",
+    "page": "fd3f15ff6bfcbbbe",
+    "width": "6",
+    "height": "1",
+    "order": 3,
+    "showTitle": true,
+    "className": "",
+    "visible": "true",
+    "disabled": "false",
+    "groupType": "default"
+  },
+  {
+    "id": "fd3f15ff6bfcbbbe",
+    "type": "ui-page",
+    "name": "AR IoT",
+    "ui": "bb57d4f509d6336e",
+    "path": "/ar-iot",
+    "icon": "chart-line",
+    "layout": "grid",
+    "theme": "5620bd1b4178cab6",
+    "breakpoints": [
+      {
+        "name": "Default",
+        "px": "0",
+        "cols": "3"
+      },
+      {
+        "name": "Tablet",
+        "px": "576",
+        "cols": "6"
+      },
+      {
+        "name": "Small Desktop",
+        "px": "768",
+        "cols": "9"
+      },
+      {
+        "name": "Desktop",
+        "px": "1024",
+        "cols": "12"
+      }
+    ],
+    "order": 1,
+    "className": "",
+    "visible": "true",
+    "disabled": "false"
+  },
+  {
+    "id": "bb57d4f509d6336e",
+    "type": "ui-base",
+    "name": "AR IoT Dashboard",
+    "path": "/dashboard",
+    "appIcon": "",
+    "includeClientData": true,
+    "acceptsClientConfig": [
+      "ui-notification",
+      "ui-control"
+    ],
+    "showPathInSidebar": false,
+    "showPageTitle": true,
+    "navigationStyle": "default",
+    "titleBarStyle": "default"
+  },
+  {
+    "id": "5620bd1b4178cab6",
+    "type": "ui-theme",
+    "name": "AR IoT Theme",
+    "colors": {
+      "surface": "#f7fafc",
+      "primary": "#0f7a5a",
+      "bgPage": "#e7edf2",
+      "groupBg": "#ffffff",
+      "groupOutline": "#d6dee5"
+    },
+    "sizes": {
+      "pagePadding": "12px",
+      "groupGap": "12px",
+      "groupBorderRadius": "8px",
+      "widgetGap": "12px"
+    }
+  },
+  {
+    "id": "9a0c30569c8574c3",
+    "type": "mqtt-broker",
+    "name": "Mosquitto local",
+    "broker": "127.0.0.1",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  }
+]

@@ -11,13 +11,6 @@ class QuestBridgeResult:
     telemetry_topic_device_id: str
 
 
-def translate_device_id(device_id: str) -> str:
-    suffix = device_id.split("-")[-1]
-    if suffix.isdigit():
-        return f"ARBOX-{suffix.zfill(3)}"
-    return device_id.upper()
-
-
 def translate_telemetry(payload: dict[str, Any]) -> QuestBridgeResult:
     source_device_id = str(payload.get("device_id", "")).strip()
     telemetry_topic_device_id = source_device_id or "unknown-device"
@@ -30,7 +23,7 @@ def translate_telemetry(payload: dict[str, Any]) -> QuestBridgeResult:
     pwm_percent = round((raw_pwm / 255.0) * 100)
 
     translated = {
-        "device_id": translate_device_id(telemetry_topic_device_id),
+        "device_id": telemetry_topic_device_id,
         "timestamp": int(payload.get("timestamp_ms", 0) or 0),
         "fanReportedRPM": fan_reported_rpm,
         "fanReportedPWM": pwm_percent,

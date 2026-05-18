@@ -1,5 +1,5 @@
 ---
-ar_iot_server_user: pi
+ar_iot_server_user: "{{ ansible_user }}"
 ar_iot_server_group: "{{ ar_iot_server_user }}"
 ar_iot_server_install_dir: /opt/ar-iot-servicebox
 ar_iot_server_repo_url: "https://example.com/ar-iot-servicebox.git"

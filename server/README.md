@@ -57,20 +57,20 @@ Wyświetl urządzenia z logu:
 
 Ustaw PWM:
 
-`python -m ar_iot_server set-fan-pwm servicebox-lite-001 80`
+`python -m ar_iot_server set-fan-pwm ARBOX-001 80`
 
 Ustaw PWM przez kontrakt Quest:
 
-`python -m ar_iot_server quest-set-fan-pwm servicebox-lite-001 80`
+`python -m ar_iot_server quest-set-fan-pwm ARBOX-001 80`
 
 Wywołaj awarię:
 
-`python -m ar_iot_server simulate-fault servicebox-lite-001 overtemperature`
+`python -m ar_iot_server simulate-fault ARBOX-001 overtemperature`
 
 Wyczyść awarię:
 
-`python -m ar_iot_server simulate-fault servicebox-lite-001 clear`
+`python -m ar_iot_server simulate-fault ARBOX-001 clear`
 
 Wznów automatyczne PWM:
 
-`python -m ar_iot_server resume-auto-pwm servicebox-lite-001`
+`python -m ar_iot_server resume-auto-pwm ARBOX-001`
